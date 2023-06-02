@@ -1,0 +1,20 @@
+.tool-bar{
+  display: flex;
+  justify-content: space-between;
+}
+
+.links{
+  display: flex;
+  justify-content: right;
+}
+.links div{
+  padding-right: 15px;
+  margin: auto;
+}
+.link:hover{
+  color: #d8d8fc;
+  cursor: pointer;
+}
+.active{
+  color: honeydew;
+}

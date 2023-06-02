@@ -1,0 +1,31 @@
+<form [formGroup]="form" (submit)="login()">
+<mat-card class="example-card">
+  <div class="container">
+  <mat-card-title>Login</mat-card-title>
+  <mat-error *ngIf="error" class="error">Email or Password is incorrect</mat-error>
+  <mat-card-content>
+      <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input type="text" matInput formControlName="email">
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+      </div>
+      <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput formControlName="password">
+        <mat-error>This field is required</mat-error>
+      </mat-form-field>
+      </div>
+
+  </mat-card-content>
+  <mat-card-actions class="actions">
+    <button class="button" mat-raised-button color="primary">Login</button>
+  </mat-card-actions>
+  </div>
+</mat-card>
+  </form>
+
+
+

@@ -1,0 +1,28 @@
+.actions{
+  display: flex;
+  justify-content: right;
+}
+
+.example-card{
+  width: 400px;
+  height: 400px;
+}
+ .container{
+   margin: auto;
+ }
+/*.cdk-overlay-dark-backdrop {*/
+/*  background: rgb(7 99 230 / 32%)!important;*/
+/*}*/
+
+mat-card-title{
+  padding-left: 18px;
+  margin-bottom: 30px;
+}
+.error{
+  padding-left: 15px;
+  margin-bottom: 10px;
+}
+.button{
+  margin-right: 7px;
+  margin-top: 15px;
+}

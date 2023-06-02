@@ -1,0 +1,127 @@
+table {
+  width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+tr.example-element-row:not(.example-expanded-row) {
+  background: rgba(247, 247, 247, 0.96);
+  transition: background 0.4s ease;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: #c5e1ef;
+
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #acebf6;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.message_and_utm{
+  display: table-column;
+  margin: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
+.pagination{
+  display: flex;
+  justify-content: center;
+
+}
+
+/***************************/
+
+.form-container{
+padding-top: 10px;
+  padding-left: 20px;
+}
+
+.filter-orders_inputs{
+  display:grid;
+  grid-template: repeat(2,100px)/repeat(6,250px);
+ align-items: center;
+
+  padding-right: 20px;
+
+}
+.filter-orders_inputs div{
+align-content: center;
+}
+
+/***************************/
+
+.orders-table__details_visible{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 15px;
+}
+
+.orders-table__details-left{
+}
+
+.orders-table__details-right{
+  width: 30%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.comment{
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid black;
+  margin-bottom: 5px;
+}
+
+.comment div{
+  padding: 2px;
+
+}
+.comment div:last-child{
+}
+
+.comment_text{
+
+}
+
+.comment_info{
+  display: flex;
+  justify-content: space-between;
+}
+
+.comment_info div{
+  padding-right: 15px;
+}
+
+.add_comment{
+  display: flex;
+  justify-content: space-between;
+  width: 350px;
+}
+
+.edit_btn{
+  justify-content: center;
+}
+example-form {
+  min-width: 450px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.container_form{
+
+
+}
