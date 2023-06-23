@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {FormsModule} from "@angular/forms";
@@ -12,6 +12,7 @@ import { HeaderLayoutComponent } from './layouts/header-layout/header-layout.com
 import {MainLayoutComponent} from "./layouts/main-layout/main-layout.component";
 import {AppRoutingModule} from "./app-routing.module";
 import { AppComponent } from './app.component';
+import {MainInterceptor} from "./main.interceptor";
 
 
 
@@ -35,7 +36,13 @@ import { AppComponent } from './app.component';
     MatDialogModule,
   ],
 
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      multi: true,
+      useClass: MainInterceptor
+    }
+  ],
   exports: [
   ],
   bootstrap: [AppComponent]

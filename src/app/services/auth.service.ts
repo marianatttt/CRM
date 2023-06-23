@@ -5,9 +5,7 @@ import {BehaviorSubject, Observable, tap} from "rxjs";
 import {ITokens} from "../interfaces/tokens.inteface";
 import {IAuth} from "../interfaces";
 import {urls} from "../contants";
-import {environment} from "../../environments/environment";
 
-const { API} = environment;
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +37,7 @@ export class AuthService {
   }
 
   me(): Observable<IAuth> {
-    return this.httpClient.get<IAuth>(`${API}auth/me`);
+    return this.httpClient.get<IAuth>(urls.auth.me);
   }
 
   getAuthUser(): Observable<IAuth | null> {

@@ -12,7 +12,7 @@ const urls = {
   auth: {
     login:auth,
     refresh:`${auth}/refresh-token`,
-    me: `${auth}/me`
+    me: `${API}auth/me`
 
   },
   order: {
