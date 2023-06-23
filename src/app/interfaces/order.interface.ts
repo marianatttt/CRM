@@ -15,13 +15,10 @@ export interface IOrder {
   course_format: {
     type:string;
     enum: ECourseFormat
-
   }
   course_type: {
     type:string;
     enum:ECourseType
-
-
   };
   status: {
     type:string | null;
@@ -33,12 +30,17 @@ export interface IOrder {
   groupId: number | null;
   created_at: string;
 
-  manager:string | null;
+  manager: {
+   type: string | null
+    id:number,
+    firstName:string,
+    lastName:string
+  };
   utm: string;
   msg: string;
   userId: number | null;
   comments: IComment[];
-
+  ownerId: number;
 }
 
 

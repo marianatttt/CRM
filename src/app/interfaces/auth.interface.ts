@@ -7,6 +7,7 @@ export interface IAuthLogin{
 }
 
 export interface IAuth{
+  userId:number,
   email:string,
   password:string,
   role: {
@@ -15,7 +16,8 @@ export interface IAuth{
   },
   firstName: string,
   lastName: string,
-  phone: string
+  phone: string,
+
 }
 
 enum UserRole {

@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, Observable, tap} from "rxjs";
+import { Router } from '@angular/router';
+
 
 import {ITokens} from "../interfaces/tokens.inteface";
 import {IAuth} from "../interfaces";
@@ -15,7 +17,8 @@ export class AuthService {
   private readonly _refreshTokenKey = 'refresh';
   private authUser: BehaviorSubject<IAuth | null> = new BehaviorSubject<IAuth | null>(null);
 
-  constructor(private httpClient: HttpClient) {
+
+  constructor(private httpClient: HttpClient, private router:Router) {
   }
 
 
@@ -28,13 +31,16 @@ export class AuthService {
     )
   }
 
-  refresh(refresh: string): Observable<ITokens> {
-    return this.httpClient.post<ITokens>(urls.auth.refresh, {refresh}).pipe(
+
+  refresh(): Observable<ITokens> {
+    const refreshToken = this.getRefreshToken();
+    return this.httpClient.post<ITokens>(urls.auth.refresh, { refreshToken }).pipe(
       tap((tokens) => {
-        this._setTokens(tokens)
+        this._setTokens(tokens);
       })
-    )
+    );
   }
+
 
   me(): Observable<IAuth> {
     return this.httpClient.get<IAuth>(urls.auth.me);
@@ -65,4 +71,15 @@ export class AuthService {
     localStorage.removeItem(this._accessTokenKey);
     localStorage.removeItem(this._refreshTokenKey);
   }
+
+  deleteTokensAndRedirect(): void {
+    this.deleteTokens();
+    this.router.navigate(['auth', 'login'], { queryParams: { sessionExp: true } });
+  }
+
+  isAuthenticated(): boolean {
+    const accessToken = this.getAccessToken();
+    return !!accessToken;
+  }
+
 }

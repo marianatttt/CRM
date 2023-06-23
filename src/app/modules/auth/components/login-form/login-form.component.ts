@@ -13,13 +13,21 @@ import {AuthService} from "../../../../services";
 export class LoginFormComponent implements  OnInit{
   form:FormGroup;
   error:boolean;
+
+
+
   constructor(
     private authService:AuthService,
     private router :Router,
-    private dialogRef :MatDialogRef<LoginFormComponent>) {}
+    private dialogRef :MatDialogRef<LoginFormComponent>) {
+
+  }
+
   ngOnInit(): void {
     this._initForm()
   }
+
+
 
   _initForm():void{
     this.form = new FormGroup<any>({
@@ -27,6 +35,8 @@ export class LoginFormComponent implements  OnInit{
       password: new FormControl('', [Validators.required])
     })
   }
+
+
 
   login():void {
     this.authService.login(this.form.getRawValue()).subscribe({

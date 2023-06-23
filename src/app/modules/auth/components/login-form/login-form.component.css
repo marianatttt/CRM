@@ -10,9 +10,7 @@
  .container{
    margin: auto;
  }
-/*.cdk-overlay-dark-backdrop {*/
-/*  background: rgb(7 99 230 / 32%)!important;*/
-/*}*/
+
 
 mat-card-title{
   padding-left: 18px;

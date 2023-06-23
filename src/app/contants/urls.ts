@@ -2,7 +2,7 @@ import {environment} from "../../environments/environment";
 
 const {API} = environment;
 
-const auth = `${API}auth/login`
+const auth = `${API}auth`
 const order = `${API}orders`
 const users = `${API}user`
 const groups = `${API}groups`
@@ -10,7 +10,7 @@ const comments = `${API}comments`
 
 const urls = {
   auth: {
-    login:auth,
+    login:`${auth}/login`,
     refresh:`${auth}/refresh-token`,
     me: `${API}auth/me`
 

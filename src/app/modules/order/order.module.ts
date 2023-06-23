@@ -46,7 +46,8 @@ import { OrdersComponent } from './components/orders/orders.component';
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+
     ]
 })
 export class OrderModule { }

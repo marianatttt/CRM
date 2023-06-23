@@ -13,6 +13,9 @@ import {MainLayoutComponent} from "./layouts/main-layout/main-layout.component";
 import {AppRoutingModule} from "./app-routing.module";
 import { AppComponent } from './app.component';
 import {MainInterceptor} from "./main.interceptor";
+import {MatButtonModule} from "@angular/material/button";
+import {AuthGuard} from "./guards/auth.guard";
+
 
 
 
@@ -34,6 +37,7 @@ import {MainInterceptor} from "./main.interceptor";
     FormsModule,
     NgxPaginationModule,
     MatDialogModule,
+    MatButtonModule,
   ],
 
   providers: [
@@ -41,7 +45,9 @@ import {MainInterceptor} from "./main.interceptor";
       provide: HTTP_INTERCEPTORS,
       multi: true,
       useClass: MainInterceptor
-    }
+    },
+    AuthGuard
+
   ],
   exports: [
   ],

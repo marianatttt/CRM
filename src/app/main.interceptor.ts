@@ -8,6 +8,7 @@ import {BehaviorSubject, catchError, filter, Observable, switchMap, take, throwE
 import {AuthService} from "./services";
 import {MatDialog} from "@angular/material/dialog";
 import {Router} from "@angular/router";
+
 import {urls} from "./contants";
 
 @Injectable()
@@ -35,7 +36,7 @@ export class MainInterceptor implements HttpInterceptor {
 
           if (res.url === urls.auth.refresh) {
             this.isRefreshing = false
-            this.authService.deleteTokens()
+            this.authService.deleteTokensAndRedirect()
             this.matDialog.closeAll()
             this.router.navigate(['auth', 'login'], {queryParams: {sessionExp: true}})
             return throwError(() => res)
@@ -61,13 +62,20 @@ export class MainInterceptor implements HttpInterceptor {
   }
 
   handle401Error(request: HttpRequest<any>, next: HttpHandler, refreshToken: string): any {
-    this.isRefreshing = true
-    return this.authService.refresh(refreshToken).pipe(
-      switchMap((token) => {
-        this.isRefreshing = false
-        this.waitRefreshSubject.next(token.access_token)
-        return next.handle(this.addToken(request, token.access_token))
+    this.isRefreshing = true;
+    return this.authService.refresh().pipe(
+      switchMap((tokens) => {
+        this.isRefreshing = false;
+        this.waitRefreshSubject.next(tokens.access_token);
+        return next.handle(this.addToken(request, tokens.access_token));
+      }),
+      catchError(() => {
+        this.isRefreshing = false;
+        this.authService.deleteTokensAndRedirect();
+        this.matDialog.closeAll();
+        this.router.navigate(['auth', 'login'], { queryParams: { sessionExp: true } });
+        return throwError(() => new HttpErrorResponse({ status: 401 }));
       })
-    )
+    );
   }
 }

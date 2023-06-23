@@ -3,17 +3,7 @@ export interface IComment {
   orderId:number;
   id:number | null;
   createdAt: Date;
-
-  author: string;
-
-
-  // author: {
-  //   firstName: string;
-  //
-  //   lastName: string;
-  // };
-
-
+  userId:number
 }
 
 

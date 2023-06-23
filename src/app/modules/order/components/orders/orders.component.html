@@ -1,111 +1,117 @@
 
 <div class="form-container">
-  <form class="filter-orders" [formGroup]="filterForm" (submit)="onFilterChange()">
-  <div class="filter-orders_inputs">
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Name</mat-label>
-      <input type="text" matInput formControlName="Name" (input)="onFilterChange()">
-    </mat-form-field>
-  </div>
-  <div >
-    <mat-form-field appearance="outline">
-      <mat-label>Surname</mat-label>
-      <input type="text" matInput formControlName="Surname" (input)="onFilterChange()">
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input type="text" matInput formControlName="Email" (input)="onFilterChange()">
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>Phone</mat-label>
-      <input type="text" matInput formControlName="Phone" (input)="onFilterChange()">
-    </mat-form-field>
-  </div>
+  <form class="filter-orders" [formGroup]="filterForm">
+    <div class="filter-orders_inputs">
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input type="text" matInput formControlName="name" (input)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <div >
+        <mat-form-field appearance="outline">
+          <mat-label>Surname</mat-label>
+          <input type="text" matInput formControlName="surname" (input)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input type="text" matInput formControlName="email" (input)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Phone</mat-label>
+          <input type="text" matInput formControlName="phone" (input)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Age</mat-label>
+          <input type="text" matInput formControlName="age" (input)="onFilterChange()">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>all courses</mat-label>
+          <mat-select formControlName="course" (selectionChange)="onFilterChange()">
+            <mat-option value="FS">FS</mat-option>
+            <mat-option value="QACX">QACX</mat-option>
+            <mat-option value="JCX">JCX</mat-option>
+            <mat-option value="JSCX">JSCX</mat-option>
+            <mat-option value="FE">FE</mat-option>
+            <mat-option value="PCX">PCX</mat-option>
+            <mat-option value="">All courses</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
     <div>
       <mat-form-field appearance="outline">
-        <mat-label>Age</mat-label>
-        <input type="text" matInput formControlName="Age" (input)="onFilterChange()">
-      </mat-form-field>
-    </div>
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>all courses</mat-label>
-      <mat-select formControlName="Course" (selectionChange)="onFilterChange()">
-        <mat-option value="FS">FS</mat-option>
-        <mat-option value="QACX">QACX</mat-option>
-        <mat-option value="JCX">JCX</mat-option>
-        <mat-option value="JSCX">JSCX</mat-option>
-        <mat-option value="FE">FE</mat-option>
-        <mat-option value="PCX">PCX</mat-option>
-        <mat-option value="">All courses</mat-option>
+        <mat-label>All groups</mat-label>
+        <mat-select formControlName="groupId" (selectionChange)="onFilterChange()">
+
         </mat-select>
-    </mat-form-field>
-  </div>
-
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>all formats</mat-label>
-      <mat-select formControlName="Course_format" (selectionChange)="onFilterChange()">
-        <mat-option value="static">static</mat-option>
-        <mat-option value="online">online</mat-option>
-        <mat-option value="">All formats</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>all types</mat-label>
-      <mat-select formControlName="Course_type" (selectionChange)="onFilterChange()">
-        <mat-option value="pro">pro</mat-option>
-        <mat-option value="minimal">minimal</mat-option>
-        <mat-option value="premium">premium</mat-option>
-        <mat-option value="incubator">incubator</mat-option>
-        <mat-option value="vip">vip</mat-option>
-        <mat-option value="">All types</mat-option>
-
-      </mat-select>
-    </mat-form-field>
-  </div>
-  <div>
-    <mat-form-field appearance="outline">
-      <mat-label>all statues</mat-label>
-      <mat-select formControlName="Status" (selectionChange)="onFilterChange()">
-        <mat-option value="In work">In work</mat-option>
-        <mat-option value="New">New</mat-option>
-        <mat-option value="Agree">Agree</mat-option>
-        <mat-option value="Disagree">Disagree</mat-option>
-        <mat-option value="Dubbing">Dubbing</mat-option>
-        <mat-option value="">All statuses</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-    <div>
-    <mat-form-field appearance="outline">
-      <mat-label>StartDate</mat-label>
-      <input matInput [matDatepicker]="startDatePicker" formControlName="StartDate" (dateInput)="onFilterChange()">
-      <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #startDatePicker></mat-datepicker>
-    </mat-form-field>
-  </div>
-    <div>
-      <mat-form-field appearance="outline">
-        <mat-label>EndDate</mat-label>
-        <input matInput [matDatepicker]="endDatePicker" formControlName="EndDate" (dateInput)="onFilterChange()">
-        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #endDatePicker></mat-datepicker>
       </mat-form-field>
     </div>
-  </div>
 
-</form>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>all formats</mat-label>
+          <mat-select formControlName="course_format" (selectionChange)="onFilterChange()">
+            <mat-option value="static">static</mat-option>
+            <mat-option value="online">online</mat-option>
+            <mat-option value="">All formats</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>all types</mat-label>
+          <mat-select formControlName="course_type" (selectionChange)="onFilterChange()">
+            <mat-option value="pro">pro</mat-option>
+            <mat-option value="minimal">minimal</mat-option>
+            <mat-option value="premium">premium</mat-option>
+            <mat-option value="incubator">incubator</mat-option>
+            <mat-option value="vip">vip</mat-option>
+            <mat-option value="">All types</mat-option>
 
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>all statues</mat-label>
+          <mat-select formControlName="status" (selectionChange)="onFilterChange()">
+            <mat-option value="In work">In work</mat-option>
+            <mat-option value="New">New</mat-option>
+            <mat-option value="Agree">Agree</mat-option>
+            <mat-option value="Disagree">Disagree</mat-option>
+            <mat-option value="Dubbing">Dubbing</mat-option>
+            <mat-option value="">All statuses</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>StartDate</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" (dateInput)="onFilterChange()">
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>EndDate</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" (dateInput)="onFilterChange()">
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
 </div>
-
 
 
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
@@ -115,8 +121,6 @@
     <td mat-cell *matCellDef="let element">
       <ng-container *ngIf="column !== 'manager'; else managerColumn">{{element[column] || 'null'}}</ng-container>
       <ng-template #managerColumn>{{getManagerFullName(element[column])}}</ng-template>
-
-
     </td>
   </ng-container>
 
@@ -126,44 +130,57 @@
 
         <div class="orders-table__details_visible">
 
-            <div class="orders-table__details-left">
-                <div>Message: {{element.msg || 'null'}}</div>
-                <div>UTM: {{element.utm || 'null'}}</div>
+          <div class="orders-table__details-left">
+            <div>Message: {{element.msg || 'null'}}</div>
+            <div>UTM: {{element.utm || 'null'}}</div>
+          </div>
+
+          <div class="orders-table__details-right">
+            <div>
+
+
+              <div *ngIf="expandedElement === element">
+              <div *ngFor="let comment of comments[element.id]" class="container_comment">
+
+                <div class="comment">
+
+                  <div class="comment_text">
+                    <div>{{ comment.text }}</div>
+                  </div>
+
+                  <div class="comment_info">
+                    <div>{{ comment.createdAt | date:'yyyy-MM-dd' }}</div>
+                    <div>{{ getCommentAuthor(comment) }}  </div>
+                  </div>
+
+                </div>
+              </div>
+              </div>
+
+              <form [formGroup]="commentForm" (ngSubmit)="addComment(element.id)" class="example-form">
+                <div class="container_form">
+                  <div>
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Comment</mat-label>
+                      <input  type="text" matInput formControlName="comment">
+                    </mat-form-field>
+                  </div>
+                  <div>
+                    <button [disabled]="!isMyOrder(element)" type="submit" mat-raised-button color="primary">SUBMIT</button>
+                  </div>
+                </div>
+              </form>
             </div>
 
-            <div class="orders-table__details-right">
-                <div>
-                    <div *ngFor="let comment of getCommentsByOrderId(element.id)" class="container_comment">
-                              <div class="comment">
-                                <div class="comment_text">
-                                  <div>{{ comment.text }}</div>
-                                </div>
-                                <div class="comment_info">
-                                  <div>{{ comment.createdAt | date:'yyyy-MM-dd' }}</div>
-                                  <div>{{ comment.author }}</div>
-                                </div>
-                              </div>
-                     </div>
 
-                    <form [formGroup]="commentForm" (ngSubmit)="addComment(element.id)" class="example-form">
-                      <div class="container_form">
-                        <div>
-                        <mat-form-field class="example-full-width">
-                          <mat-label>Comment</mat-label>
-                          <input  type="text" matInput formControlName="comment">
-                        </mat-form-field>
-                      </div>
-                        <div>
-                          <button type="submit" mat-raised-button color="primary" [disabled]="commentForm.get('manager')?.value !== null || element.manager !== null">SUBMIT</button>
-                        </div>
-                      </div>
-                    </form>
-                </div>
-                <div>
-                  <button type="submit" mat-raised-button color="primary" [disabled]="commentForm.get('manager')?.value !== null || element.manager !== null">EDIT</button>
-                </div>
 
+
+            <div>
+              <button [disabled]="!isMyOrder(element)" type="submit" mat-raised-button color="primary">EDIT</button>
             </div>
+
+          </div>
+
         </div>
       </div>
     </td>
@@ -175,7 +192,7 @@
   <tr mat-row *matRowDef="let element; columns: displayedColumns;"
       class="example-element-row"
       [class.example-expanded-row]="expandedElement === element"
-      (click)="expandedElement = expandedElement === element ? null : element">
+      (click)="setExpandedElement(element)">
   </tr>
 
   <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
@@ -186,7 +203,6 @@
 <div *ngFor="let order of orders | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }"class="pagination">
 </div>
 <div class="pagination">
-<pagination-controls (pageChange)="pageChanged($event)" class="my-pagination"></pagination-controls>
+  <pagination-controls (pageChange)="pageChanged($event)" class="my-pagination"></pagination-controls>
 </div>
-
 

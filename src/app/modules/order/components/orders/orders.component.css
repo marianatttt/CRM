@@ -52,14 +52,18 @@ padding-top: 10px;
 .filter-orders_inputs{
   display:grid;
   grid-template: repeat(2,100px)/repeat(6,250px);
+  gap: 15px;
  align-items: center;
-
-  padding-right: 20px;
-
 }
 .filter-orders_inputs div{
 align-content: center;
 }
+
+
+mat-form-field{
+  width: 100%;
+}
+
 
 /***************************/
 
@@ -74,7 +78,7 @@ align-content: center;
 }
 
 .orders-table__details-right{
-  width: 30%;
+  width: 35%;
   display: flex;
   justify-content: space-between;
 }
@@ -84,16 +88,20 @@ align-content: center;
   justify-content: space-between;
   border-bottom: 1px solid black;
   margin-bottom: 5px;
+
+
 }
 
 .comment div{
   padding: 2px;
+
 
 }
 .comment div:last-child{
 }
 
 .comment_text{
+  margin-right: 40px;
 
 }
 
@@ -119,9 +127,4 @@ example-form {
   min-width: 450px;
   max-width: 500px;
   width: 100%;
-}
-
-.container_form{
-
-
 }

@@ -5,12 +5,10 @@ import {MatSort} from "@angular/material/sort";
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import {MatDialog } from "@angular/material/dialog";
 import {HttpClient} from "@angular/common/http";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NavigationExtras } from '@angular/router';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {CommentService, OrderService} from "../../../../services";
-import { IComment, IOrder} from "../../../../interfaces";
-
+import {AuthService, CommentService, OrderService} from "../../../../services";
+import {IComment, IOrder} from "../../../../interfaces";
 
 
 
@@ -39,19 +37,18 @@ export class OrdersComponent implements OnInit {
   expandedElement: IOrder | null;
   sortColumn: string;
   sortDirection: string;
-
-  comments: { [orderId: number]: IComment[] } = {};
+  expandedRowIndex: number | null = null;
+  comments: Record<number, IComment[]> = {};
   orderId:string;
-
   order: IOrder | null ;
   commentForm: FormGroup;
   commentForms: { [key: number]: FormGroup } = {};
-  filters: any = {};
-
   filteredOrders: any[] = [];
   filterForm: FormGroup;
   filterParams: any = {};
-
+  startDate= new FormControl(new Date());
+  endDate= new FormControl(new Date());
+  currentUser: any
 
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -64,31 +61,45 @@ export class OrdersComponent implements OnInit {
     private dialog: MatDialog,
     private httpClient: HttpClient,
     private formBuilder: FormBuilder,
+    private authService: AuthService,
+
   ) {
     this.commentForm = this.formBuilder.group({
       comment: ['', Validators.required]
     });
     this.filterForm = this.formBuilder.group({
-      Name: [''],
-      Surname: [''],
-      Email: [''],
-      Phone: [''],
-      Age: [''],
-      Course: [''],
-      Course_format: [''],
-      Course_type: [''],
-      Status: [''],
-      StartDate: [''],
-      EndDate: ['']
+      name: [''],
+      surname: [''],
+      email: [''],
+      phone: [''],
+      age: [''],
+      course: [''],
+      course_format: [''],
+      course_type: [''],
+      status: [''],
+      groupId:[''],
+      startDate: [''],
+      endDate: ['']
     });
+    this.expandedElement = null;
 
   }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.currentPage = params['page'] ? +params['page'] : 1;
-      this.filterForm.patchValue(params)
-      this.getOrders();
+      this.filterForm.patchValue(params);
+
+      this.getOrders()
+    });
+    this.route.params.subscribe(params => {
+      this.orderId = params['id'];
+      if (this.orderId) {
+        this.loadComments(+this.orderId);
+      }
+    });
+    this.authService.me().subscribe(user => {
+      this.currentUser = user;
     });
   }
 
@@ -99,86 +110,177 @@ export class OrdersComponent implements OnInit {
       this.sortColumn,
       this.sortDirection,
       this.filterParams,
-  )
+      this.filterForm.value.startDate,
+      this.filterForm.value.endDate
+    )
       .subscribe(response => {
         this.orders = response.data;
+
         this.totalItems = response.total;
         this.dataSource = new MatTableDataSource(this.orders);
-        this.dataSource.sort = this.sort;
-        this.filterOrders();
-        this.dataSource.data = this.filteredOrders;
-        this.filterParams = this.filters
-        this.getOrdersWithComments();
+        });
+  }
+
+  loadComments(orderId: number): void {
+    this.commentService.getAllCommentsByOrderId(orderId)
+      .subscribe(comments => {
+        this.comments[orderId] = comments;
       });
-    console.log('Filter Params:', this.filterParams)
+  }
+
+  setExpandedElement(element: IOrder): void {
+    if (this.expandedElement === element) {
+      this.expandedElement = null;
+    } else {
+      this.expandedElement = element;
+      this.loadComments(element.id);
+    }
+  }
+
+  addComment(orderId: number) {
+    const commentControl = this.commentForm.get('comment');
+    if (commentControl) {
+      const comment = commentControl.value;
+      this.commentService.addCommentToOrder(orderId, comment).subscribe(newComment => {
+        if (this.comments[orderId]) {
+          this.comments[orderId].push(newComment);
+        } else {
+          this.comments[orderId] = [newComment];
+        }
+        this.commentForm.reset();
+
+      });
+    }
+  }
+
+  getCommentAuthor(comment: IComment): string {
+    const order = this.orders.find(order => order.id === comment.orderId);
+    if (order && order.manager && order.manager.id === comment.userId) {
+      return `${order.manager.firstName} ${order.manager.lastName}`;
+    }
+    return 'Unknown';
   }
 
 
-  filterOrders() {
-    const filters = this.filterForm.value;
-    this.filteredOrders = this.orders.filter((order: IOrder) => {
-      const startDate = filters.StartDate ? new Date(filters.StartDate) : null;
-      const endDate = filters.EndDate ? new Date(filters.EndDate) : null;
-      const orderDate = new Date(order.created_at);
-      const validStartDate = startDate ? startDate : new Date("1970-01-01");
-      const validEndDate = endDate ? endDate : new Date();
-      return (
-        (!filters.Name || order.name.toLowerCase().includes(filters.Name.toLowerCase())) &&
-        (!filters.Surname || order.surname.toLowerCase().includes(filters.Surname.toLowerCase())) &&
-        (!filters.Email || order.email.toLowerCase().includes(filters.Email.toLowerCase())) &&
-        (!filters.Phone || order.phone.toLowerCase().includes(filters.Phone.toLowerCase())) &&
-        (!filters.Age || order.age.toString() === filters.Age) &&
-        (!filters.Course || order.course === filters.Course) &&
-        (!filters.Course_format || order.course_format === filters.Course_format) &&
-        (!filters.Course_type || order.course_type === filters.Course_type) &&
-        (!filters.Status || order.status === filters.Status) &&
-        (!filters.StartDate || orderDate >= validStartDate) &&
-        (!filters.EndDate || orderDate <= validEndDate)
-      );
-    });
+  isMyOrder(order: any): boolean {
+    if (!this.currentUser) {
+      return false;
+    }
+    if (order.userId === this.currentUser.userId || order.managerId === this.currentUser.userId || order.managerId === null) {
+      return true;
+    }
+    return false;
   }
+
 
   onFilterChange() {
-    const filters = this.filterForm.value;
-    console.log('StartDate:', filters.StartDate);
-    console.log('EndDate:', filters.EndDate);
-    const queryParams: any = { page: this.currentPage };
-    Object.keys(filters).forEach(key => {
+    const filterParams: any = {};
 
-      if (filters.hasOwnProperty(key) && filters[key]) {
-        if (key === 'StartDate' || key === 'EndDate') {
-          const date = new Date(filters[key]);
-          queryParams[key] = date.toISOString().split('T')[0];
-        } else {
-          queryParams[key] = filters[key];
+    if (this.filterForm.value.name) {
+      filterParams['name'] = `like:${this.filterForm.value.name}`;
+    }
+
+    if (this.filterForm.value.surname) {
+      filterParams['surname'] = `like:${this.filterForm.value.surname}`;
+    }
+
+    if (this.filterForm.value.email) {
+      filterParams['email'] = `like:${this.filterForm.value.email}`;
+    }
+
+    if (this.filterForm.value.phone) {
+      filterParams['phone'] = `like:${this.filterForm.value.phone}`;
+    }
+
+    if (this.filterForm.value.age) {
+      filterParams['age'] = `eq:${this.filterForm.value.age}`;
+    }
+
+    if (this.filterForm.value.course) {
+      filterParams['course'] = this.filterForm.value.course;
+    }
+
+    if (this.filterForm.value.course_type) {
+      filterParams['course_type'] = this.filterForm.value.course_type;
+    }
+
+    if (this.filterForm.value.course_format) {
+      filterParams['course_format'] = this.filterForm.value.course_format;
+    }
+    if (this.filterForm.value.status) {
+      filterParams['status'] = this.filterForm.value.status;
+    }
+
+    if (this.filterForm.value.groupId) {
+      filterParams['groupId'] = this.filterForm.value.groupId;
+    }
+
+    if (this.filterForm.value.startDate) {
+      const startDate = new Date(this.filterForm.value.startDate);
+      filterParams['startDate'] = startDate.toISOString() ;
+    }
+
+
+    if (this.filterForm.value.endDate) {
+      const endDate = new Date(this.filterForm.value.endDate);
+      filterParams['endDate'] = endDate.toISOString();
+    }
+
+    this.filterParams = { ...filterParams };
+
+    const queryParams: any = {};
+
+    for (const key in filterParams) {
+      if (filterParams.hasOwnProperty(key)) {
+        const value = filterParams[key];
+        if (value !== null) {
+          if (value.startsWith('like:')) {
+            queryParams[key] = value.substring(5);
+          } else if (value.startsWith('eq:')) {
+            queryParams[key] = value.substring(3);
+          } else {
+            if (key === 'startDate' || key === 'endDate') {
+              const date = new Date(value);
+              queryParams[key] = date.toISOString().substring(0, 10);
+            } else {
+              queryParams[key] = value;
+            }
+          }
         }
-      } else {
-        queryParams[key] = null;
       }
-    });
+    }
 
-    const navigationExtras: NavigationExtras = {
-      queryParams,
-      queryParamsHandling: 'merge',
-    };
-    this.router.navigate([], navigationExtras).then(() => {
-      this.getOrders();
-    });
+    if (this.sortColumn && this.sortDirection) {
+      queryParams['sortColumn'] = this.sortColumn;
+      queryParams['sortDirection'] = this.sortDirection;
+    }
+
+    const urlTree = this.router.createUrlTree([], { queryParams });
+    this.router.navigateByUrl(urlTree);
+
+    const { startDate, endDate, ...restFilterParams } = filterParams;
   }
 
-  sortData(column:string):void{
+  sortData(column: string): void {
     const direction = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.sortColumn = column;
     this.sortDirection = direction;
+
+    const queryParams = {
+      page: 1,
+      sortColumn: this.sortColumn,
+      sortDirection: this.sortDirection
+    };
+
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        sortColumn: this.sortColumn,
-        sortDirection: this.sortDirection,},
+      queryParams,
       queryParamsHandling: 'merge'
     });
+
     this.getOrders();
   }
+
 
   pageChanged(event: any): void {
     this.currentPage = event;
@@ -191,32 +293,6 @@ export class OrdersComponent implements OnInit {
   }
 
 
-  addComment(orderId: number) {
-    const commentControl = this.commentForm.get('comment');
-    if (commentControl) {
-      const comment = commentControl.value;
-      this.commentService.addCommentToOrder(orderId, comment).subscribe(newComment => {
-        const order = this.orders.find(order => order.id === orderId);
-        if (order) {
-          order.comments.push(newComment);
-        }
-        this.commentForm.reset();
-      });
-    }
-  }
-
-  getOrdersWithComments(): void {
-    this.commentService.getOrdersWithComments(this.orders)
-      .subscribe(ordersWithComments => {
-        this.orders = ordersWithComments;
-      });
-  }
-
-  getCommentsByOrderId(orderId: number): IComment[] {
-    const order = this.orders.find(order => order.id === orderId);
-    return order ? order.comments : [];
-  }
-
   getManagerFullName(manager: any): string {
     if (manager && manager.firstName && manager.lastName) {
       return manager.firstName + ' ' + manager.lastName;
@@ -224,6 +300,7 @@ export class OrdersComponent implements OnInit {
       return 'null';
     }
   }
+
 
   getColumnLabel(column: string): string {
     switch (column) {
