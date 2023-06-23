@@ -61,7 +61,6 @@ export class MainInterceptor implements HttpInterceptor {
   }
 
   handle401Error(request: HttpRequest<any>, next: HttpHandler, refreshToken: string): any {
-
     this.isRefreshing = true
     return this.authService.refresh(refreshToken).pipe(
       switchMap((token) => {
