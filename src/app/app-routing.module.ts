@@ -4,7 +4,7 @@ import {RouterModule, Routes} from "@angular/router";
 
 import {AuthLayoutComponent} from "./layouts/auth-layout/auth-layout.component";
 import {MainLayoutComponent} from "./layouts/main-layout/main-layout.component";
-import {AuthGuard} from "./guards/auth.guard";
+import {AuthGuard} from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'order', pathMatch: 'full' }, // Перенаправлення з кореневого шляху на сторінку ордерів

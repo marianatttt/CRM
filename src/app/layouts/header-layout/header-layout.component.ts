@@ -1,9 +1,10 @@
-import { Router } from '@angular/router';
+import { Router} from '@angular/router';
 import { Location } from '@angular/common';
 
 import {Component, OnInit} from '@angular/core';
 import {IAuth} from "../../interfaces";
 import {AuthService} from "../../services";
+
 
 @Component({
   selector: 'app-header-layout',
@@ -17,7 +18,10 @@ user:IAuth|null;
   constructor(
     private authService: AuthService,
     private location: Location,
-    private router: Router
+    private router: Router,
+
+
+
   ) {}
 
   ngOnInit(): void {
@@ -34,12 +38,19 @@ user:IAuth|null;
     });
   }
 
+
+
+
   navigateToHomePage(): void {
-    const queryParams = {};
     this.router.navigateByUrl('/order', { replaceUrl: true }).then(() => {
       window.location.reload();
     });
   }
+
+
+
+
+
 
 
   deleteToken(): void {
