@@ -1,5 +1,7 @@
 
 <div class="form-container">
+
+  <div>
   <form class="filter-orders" [formGroup]="filterForm">
     <div class="filter-orders_inputs">
       <div>
@@ -51,7 +53,8 @@
       <mat-form-field appearance="outline">
         <mat-label>All groups</mat-label>
         <mat-select formControlName="groupId" (selectionChange)="onFilterChange()">
-
+          <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+          <mat-option value="">All groups</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -96,22 +99,60 @@
       <div>
         <mat-form-field appearance="outline">
           <mat-label>StartDate</mat-label>
+
           <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" (dateInput)="onFilterChange()">
-          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
+
         </mat-form-field>
       </div>
+
       <div>
         <mat-form-field appearance="outline">
           <mat-label>EndDate</mat-label>
           <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" (dateInput)="onFilterChange()">
-          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker">
+            <mat-icon>event</mat-icon>
+          </mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
       </div>
+
+
+
     </div>
   </form>
+  </div>
+
+
+
+
+
+
+  <div class="container_icons">
+
+    <div class="checkbox">
+      <section class="example-section">
+        <mat-checkbox class="example-margin my-checkbox" color="primary">My</mat-checkbox>
+      </section>
+    </div>
+
+    <div class="icons">
+      <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z"/></svg>
+    </div>
+
+
+    <div class="icons">
+      <svg xmlns="http://www.w3.org/2000/svg" height="2em" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M320 464c8.8 0 16-7.2 16-16V160H256c-17.7 0-32-14.3-32-32V48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320zM0 64C0 28.7 28.7 0 64 0H229.5c17 0 33.3 6.7 45.3 18.7l90.5 90.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64z"/></svg>
+    </div>
+
+  </div>
+
 </div>
+
+
+
 
 
 <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort>
@@ -119,10 +160,16 @@
   <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
     <th mat-header-cell *matHeaderCellDef mat-sort-header (click)="sortData(column)">{{getColumnLabel(column)}}</th>
     <td mat-cell *matCellDef="let element">
-      <ng-container *ngIf="column !== 'manager'; else managerColumn">{{element[column] || 'null'}}</ng-container>
-      <ng-template #managerColumn>{{getManagerFullName(element[column])}}</ng-template>
+      <ng-container *ngIf="column !== 'manager' && column !== 'group'; else otherColumn">{{element[column] || 'null'}}</ng-container>
+      <ng-template #otherColumn>
+        <ng-container *ngIf="column === 'manager'">{{getManagerFullName(element.manager)}}</ng-container>
+        <ng-container *ngIf="column === 'group'">{{getGroupNameById(element.groupId)}}</ng-container>
+      </ng-template>
     </td>
   </ng-container>
+
+
+
 
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">

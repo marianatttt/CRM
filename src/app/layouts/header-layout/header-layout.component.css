@@ -1,6 +1,7 @@
 .tool-bar{
   display: flex;
   justify-content: space-between;
+  height:100px;
 }
 
 .links{
@@ -11,8 +12,13 @@
   padding-right: 15px;
   margin: auto;
 }
+.link{
+  font-size: 22px;
+  transition: all 0.3s ease;
+
+}
 .link:hover{
-  color: #d8d8fc;
+  font-size: 24px;
   cursor: pointer;
 }
 .active{

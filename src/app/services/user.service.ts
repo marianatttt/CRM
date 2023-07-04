@@ -16,4 +16,9 @@ export class UserService{
     return this.httpClient.get<IAuth>(urls.users.users)
   }
 
+  getByID(id:string):Observable<IAuth>{
+    return this.httpClient.get<IAuth>(urls.users.byID(id))
+  }
+
+
 }

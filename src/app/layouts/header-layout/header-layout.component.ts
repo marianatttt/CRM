@@ -1,24 +1,32 @@
-import { Router } from '@angular/router';
-import { Location } from '@angular/common';
-
+import {ActivatedRoute, Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
+
 import {IAuth} from "../../interfaces";
 import {AuthService} from "../../services";
+import {OrderPageComponent} from "../../modules/order/pages/order-page/order-page.component";
+
+
+
 
 @Component({
   selector: 'app-header-layout',
   templateUrl: './header-layout.component.html',
-  styleUrls: ['./header-layout.component.css']
+  styleUrls: ['./header-layout.component.css'],
+
 })
 export class HeaderLayoutComponent implements OnInit{
-user:IAuth|null;
+  user:IAuth|null;
+
 
 
   constructor(
     private authService: AuthService,
-    private location: Location,
-    private router: Router
-  ) {}
+
+    private router: Router,
+    private route: ActivatedRoute
+
+  ) {
+  }
 
   ngOnInit(): void {
     this.authService.getAuthUser().subscribe((value) => {
@@ -32,14 +40,17 @@ user:IAuth|null;
         });
       }
     });
+
   }
 
+
   navigateToHomePage(): void {
-    const queryParams = {};
     this.router.navigateByUrl('/order', { replaceUrl: true }).then(() => {
       window.location.reload();
     });
   }
+
+
 
 
   deleteToken(): void {

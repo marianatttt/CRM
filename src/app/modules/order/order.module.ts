@@ -19,6 +19,7 @@ import {MatNativeDateModule} from "@angular/material/core";
 import { OrderRoutingModule } from './order-routing.module';
 import { OrderPageComponent } from './pages/order-page/order-page.component';
 import { OrdersComponent } from './components/orders/orders.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 
@@ -27,27 +28,28 @@ import { OrdersComponent } from './components/orders/orders.component';
     OrderPageComponent,
     OrdersComponent
   ],
-    imports: [
-        CommonModule,
-        OrderRoutingModule,
-        NgxPaginationModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatSortModule,
-        MatFormFieldModule,
-        FormsModule,
-        MatDialogModule,
-        MatListModule,
-        MatIconModule,
-        MatCardModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        ReactiveFormsModule,
+  imports: [
+    CommonModule,
+    OrderRoutingModule,
+    NgxPaginationModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatDialogModule,
+    MatListModule,
+    MatIconModule,
+    MatCardModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
 
-    ]
+  ]
 })
 export class OrderModule { }

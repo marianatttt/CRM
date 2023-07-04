@@ -28,6 +28,14 @@ export interface IOrder {
   sum: number | null;
   alreadyPaid: number | null;
   groupId: number | null;
+
+  group: {
+    type: string | null;
+    id:string;
+    name:string;
+
+  }
+
   created_at: string;
 
   manager: {

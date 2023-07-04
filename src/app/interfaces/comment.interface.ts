@@ -3,7 +3,10 @@ export interface IComment {
   orderId:number;
   id:number | null;
   createdAt: Date;
-  userId:number
+  userId:number;
+
 }
+
+
 
 

@@ -4,7 +4,7 @@ const {API} = environment;
 
 const auth = `${API}auth`
 const order = `${API}orders`
-const users = `${API}user`
+const users = `${API}users`
 const groups = `${API}groups`
 const comments = `${API}comments`
 
@@ -22,6 +22,7 @@ const urls = {
   },
   users: {
     users,
+    byID: (id: string) : string => `${users}/byID/${id}`,
     byEmail: (email: string): string => `${users}/${email}`
   },
   groups:{

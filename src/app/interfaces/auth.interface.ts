@@ -7,6 +7,7 @@ export interface IAuthLogin{
 }
 
 export interface IAuth{
+  id:string,
   userId:number,
   email:string,
   password:string,
@@ -17,6 +18,8 @@ export interface IAuth{
   firstName: string,
   lastName: string,
   phone: string,
+  isActive:boolean,
+  lastLogin: Date | null
 
 }
 

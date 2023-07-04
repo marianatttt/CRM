@@ -45,13 +45,14 @@ tr.example-element-row:not(.example-expanded-row):active {
 /***************************/
 
 .form-container{
-padding-top: 10px;
+  display: flex;
+  padding-top: 20px;
   padding-left: 20px;
 }
 
 .filter-orders_inputs{
   display:grid;
-  grid-template: repeat(2,100px)/repeat(6,250px);
+  grid-template: repeat(2,70px)/repeat(6,260px);
   gap: 15px;
  align-items: center;
 }
@@ -128,3 +129,41 @@ example-form {
   max-width: 500px;
   width: 100%;
 }
+
+/**********************/
+
+.container_icons{
+  margin-left: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container_icons div{
+  margin-right: 20px;
+}
+
+.icons{
+  width: 40px;
+  height: 40px;
+  background-color: #4c4cd2;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+
+}
+.icons:hover{
+  background-color: rgb(94, 87, 232);
+}
+
+.checkbox{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.my-checkbox{
+  transform: scale(1.3);
+}
+
