@@ -1,9 +1,8 @@
-import {ActivatedRoute, Router} from '@angular/router';
+import { Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 
 import {IAuth} from "../../interfaces";
 import {AuthService} from "../../services";
-import {OrderPageComponent} from "../../modules/order/pages/order-page/order-page.component";
 
 
 
@@ -23,7 +22,6 @@ export class HeaderLayoutComponent implements OnInit{
     private authService: AuthService,
 
     private router: Router,
-    private route: ActivatedRoute
 
   ) {
   }
