@@ -100,7 +100,6 @@ export class OrdersComponent implements OnInit  {
     });
     this.expandedElement = null;
 
-
   }
 
 
@@ -108,21 +107,18 @@ export class OrdersComponent implements OnInit  {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.currentPage = params['page'] ? Number(params['page']) : 1;
-
-      // const page = params['page'] ? +params['page'] : 1;
-
       this.filterForm.patchValue(params);
-      this.sortColumn = params['sortColumn'] ; // Отримати поточне значення стовпця сортування з параметрів запиту
-      this.sortDirection = params['sortDirection'] ; // Отримати поточне значення напрямку сортування з параметрів запиту
-
-
+      this.sortColumn = params['sortColumn'] ;
+      this.sortDirection = params['sortDirection'] ;
     });
+
     this.route.params.subscribe(params => {
       this.orderId = params['id'];
       if (this.orderId) {
         this.loadComments(+this.orderId);
       }
     });
+
     this.authService.me().subscribe(user => {
       this.currentUser = user;
     });
@@ -131,16 +127,12 @@ export class OrdersComponent implements OnInit  {
 
     this.getGroups()
 
-
-
   }
 
 
   getGroups():void{
     this.groupService.getAllGroup().subscribe(value => this.groups = value)
   }
-
-
 
   getOrders(): void {
     this.orderService.getPaginatedOrders(
@@ -156,9 +148,7 @@ export class OrdersComponent implements OnInit  {
         this.orders = response.data;
         this.totalItems = response.total;
         this.dataSource = new MatTableDataSource(this.orders);
-
       });
-
 
   }
 
@@ -198,7 +188,7 @@ export class OrdersComponent implements OnInit  {
             order.manager = {
               ...user,
               type: null,
-              id: Number(user.id) // Перетворюємо значення id на число
+              id: Number(user.id)
             };
           }
         });
@@ -226,7 +216,6 @@ export class OrdersComponent implements OnInit  {
   }
 
 
-
   getCommentAuthor(comment: IComment): string {
     const order = this.orders.find(order => order.id === comment.orderId);
     if (order && order.manager && order.manager.id === comment.userId) {
@@ -247,9 +236,8 @@ export class OrdersComponent implements OnInit  {
   }
 
 
-
   onFilterChange() {
-    clearTimeout(this.filterTimeout); // Скасувати попередню затримку
+    clearTimeout(this.filterTimeout);
 
     this.filterTimeout = setTimeout(() => {
       const filterParams: any = {};

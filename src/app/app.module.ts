@@ -15,7 +15,7 @@ import { AppComponent } from './app.component';
 import {MainInterceptor} from "./main.interceptor";
 import {MatButtonModule} from "@angular/material/button";
 import {AuthGuard} from "./guards/auth.guard";
-// import {ResetService} from "./services/reset.service";
+
 
 
 
@@ -47,8 +47,8 @@ import {AuthGuard} from "./guards/auth.guard";
       multi: true,
       useClass: MainInterceptor
     },
-    AuthGuard,
-    // ResetService
+    AuthGuard
+
 
   ],
   exports: [
