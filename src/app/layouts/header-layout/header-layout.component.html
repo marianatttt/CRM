@@ -1,17 +1,19 @@
 <mat-toolbar color="primary" class="tool-bar">
-  <div class="link" (click)="navigateToHomePage()">LOGO</div>
 
+  <a class="link" (click)="resetPage()">
+    LOGO
+  </a>
 
   <div class="links">
 
     <div *ngIf = "user">{{user.role}}</div>
 
   <div class="link" routerLink="user" routerLinkActive="active">
-    <button type="submit" mat-raised-button color="primary" class="my-button">Admin</button>
+    <button type="submit" mat-raised-button >Admin</button>
   </div>
 
   <div class="link" routerLink="auth/login" routerLinkActive="active" (click)="deleteToken()">
-    <button class="button" mat-raised-button color="primary">Logout</button>
+    <button class="button" mat-raised-button>Logout</button>
   </div>
 
   </div>

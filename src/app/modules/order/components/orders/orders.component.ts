@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit,  ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
@@ -6,11 +6,11 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import {MatDialog } from "@angular/material/dialog";
 import {HttpClient} from "@angular/common/http";
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import { Subject} from 'rxjs';
+import { Subscription} from 'rxjs';
 
-import {AuthService, CommentService, GroupService, OrderService, UserService} from "../../../../services";
+import {AuthService, CommentService, GroupService, OrderService, UserService, PageResetService} from "../../../../services";
 import {IComment, IGroup, IOrder} from "../../../../interfaces";
-
+import {GroupLayoutComponent} from "../../../../layouts/group-layout/group-layout.component";
 
 
 
@@ -29,7 +29,8 @@ import {IComment, IGroup, IOrder} from "../../../../interfaces";
   ],
 
 })
-export class OrdersComponent implements OnInit  {
+export class OrdersComponent implements OnInit, OnDestroy {
+
 
   isExpansionDetailRow = (i: number, row: any) => row.hasOwnProperty('detailRow');
 
@@ -40,8 +41,8 @@ export class OrdersComponent implements OnInit  {
   displayedColumns: string[] = ['id', 'name', 'surname', 'email', 'phone', 'age', 'course', 'course_format','course_type', 'status', 'sum', 'alreadyPaid', 'group', 'created_at', 'manager'];
   dataSource:MatTableDataSource<IOrder>;
   expandedElement: IOrder | null;
-  sortColumn: string;
-  sortDirection: string;
+  sortColumn: string ;
+  sortDirection: string ;
   expandedRowIndex: number | null = null;
   comments: Record<number, IComment[]> = {};
   orderId:string;
@@ -54,17 +55,21 @@ export class OrdersComponent implements OnInit  {
   startDate= new FormControl(new Date());
   endDate= new FormControl(new Date());
   currentUser: any;
-  queryParams: any = {};
+  private queryParams: any = {};
 
   filterTimeout: any;
-  filterChanged: Subject<void> = new Subject<void>();
 
   groups: IGroup[];
+  showMyOrdersOnly = false;
+  userId: number | null;
+  resetPageSubscription: Subscription;
 
 
 
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+
 
   constructor(
     private route: ActivatedRoute,
@@ -76,11 +81,13 @@ export class OrdersComponent implements OnInit  {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private userService: UserService,
+    private groupService: GroupService,
 
-    private groupService: GroupService
+    private pageResetService :PageResetService,
 
 
-  ) {
+
+) {
     this.commentForm = this.formBuilder.group({
       comment: ['', Validators.required]
     });
@@ -104,13 +111,15 @@ export class OrdersComponent implements OnInit  {
 
 
 
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.currentPage = params['page'] ? Number(params['page']) : 1;
+      this.currentPage = params['page'];
       this.filterForm.patchValue(params);
       this.sortColumn = params['sortColumn'] ;
       this.sortDirection = params['sortDirection'] ;
     });
+
 
     this.route.params.subscribe(params => {
       this.orderId = params['id'];
@@ -121,107 +130,73 @@ export class OrdersComponent implements OnInit  {
 
     this.authService.me().subscribe(user => {
       this.currentUser = user;
+      this.userId = this.currentUser.userId;
     });
 
-    this.onFilterChange();
 
+    this.onFilterChange();
     this.getGroups()
 
+    this.resetPageSubscription = this.pageResetService.resetPage$.subscribe(() => {
+      this.resetPage();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.resetPageSubscription.unsubscribe();
   }
 
 
-  getGroups():void{
-    this.groupService.getAllGroup().subscribe(value => this.groups = value)
+  resetPage(): void {
+
+    this.orders = [];
+    this.currentPage = 1;
+    this.sortColumn = '';
+    this.sortDirection = '';
+    this.expandedElement = null;
+    this.filterForm.reset();
+    this.filterParams = {};
+    this.startDate.setValue(new Date());
+    this.endDate.setValue(new Date());
+    this.showMyOrdersOnly = false;
+    this.dataSource = new MatTableDataSource(this.orders);
+
+
+    this.applySort();
+    this.router.navigateByUrl('/order');
+
   }
 
   getOrders(): void {
-    this.orderService.getPaginatedOrders(
-      this.currentPage,
-      this.itemsPerPage,
-      this.sortColumn,
-      this.sortDirection,
-      this.filterParams,
-      this.filterForm.value.startDate,
-      this.filterForm.value.endDate
-    )
-      .subscribe(response => {
-        this.orders = response.data;
-        this.totalItems = response.total;
+    if (this.showMyOrdersOnly && this.userId !== null && this.userId === this.currentUser.userId) {
+      this.orderService.myOrders(
+        this.userId
+      ).subscribe(orders => {
+        this.orders = orders
         this.dataSource = new MatTableDataSource(this.orders);
       });
-
-  }
-
-
-  loadComments(orderId: number): void {
-    this.commentService.getAllCommentsByOrderId(orderId)
-      .subscribe(comments => {
-        this.comments[orderId] = comments;
-      });
-  }
-
-  setExpandedElement(element: IOrder): void {
-    if (this.expandedElement === element) {
-      this.expandedElement = null;
     } else {
-      this.expandedElement = element;
-      this.loadComments(element.id);
-    }
-  }
-
-
-  addComment(orderId: number) {
-    const commentControl = this.commentForm.get('comment');
-    if (commentControl) {
-      const comment = commentControl.value;
-      this.commentService.addCommentToOrder(orderId, comment).subscribe(newComment => {
-        if (this.comments[orderId]) {
-          this.comments[orderId].push(newComment);
-        } else {
-          this.comments[orderId] = [newComment];
-        }
-        this.commentForm.reset();
-
-        this.userService.getByID(newComment.userId.toString()).subscribe(user => {
-          const order = this.orders.find(order => order.id === newComment.orderId);
-          if (order) {
-            order.manager = {
-              ...user,
-              type: null,
-              id: Number(user.id)
-            };
-          }
+      this.orderService.getPaginatedOrders(
+        this.currentPage,
+        this.itemsPerPage,
+        this.sortColumn,
+        this.sortDirection,
+        this.filterParams,
+        this.filterForm.value.startDate,
+        this.filterForm.value.endDate
+      )
+        .subscribe(response => {
+          this.orders = response.data;
+          this.totalItems = response.total;
+          this.dataSource = new MatTableDataSource(this.orders);
         });
-      });
     }
   }
 
+  toggleShowMyOrdersOnly(): void {
+    this.showMyOrdersOnly = !this.showMyOrdersOnly;
 
-  getManagerFullName(manager: any): string {
-    if (manager && manager.firstName && manager.lastName) {
-      return manager.firstName + ' ' + manager.lastName;
-    } else {
-      return 'null';
-    }
-  }
-
-
-  getGroupNameById(groupId: number): string {
-    const group = this.groups.find(group => group.id === groupId);
-    if (group && group.name){
-      return group.name;
-    }else {
-      return 'null'
-    }
-  }
-
-
-  getCommentAuthor(comment: IComment): string {
-    const order = this.orders.find(order => order.id === comment.orderId);
-    if (order && order.manager && order.manager.id === comment.userId) {
-      return `${order.manager.firstName} ${order.manager.lastName}`;
-    }
-    return 'Unknown';
+    this.getOrders();
   }
 
 
@@ -241,6 +216,7 @@ export class OrdersComponent implements OnInit  {
 
     this.filterTimeout = setTimeout(() => {
       const filterParams: any = {};
+
 
       if (this.filterForm.value.name) {
         filterParams['name'] = `like:${this.filterForm.value.name}`;
@@ -284,12 +260,12 @@ export class OrdersComponent implements OnInit  {
 
       if (this.filterForm.value.startDate) {
         const startDate = new Date(this.filterForm.value.startDate);
-        filterParams['startDate'] = startDate.toISOString();
+        filterParams['startDate'] = startDate;
       }
 
       if (this.filterForm.value.endDate) {
         const endDate = new Date(this.filterForm.value.endDate);
-        filterParams['endDate'] = endDate.toISOString();
+        filterParams['endDate'] = endDate;
       }
 
       this.filterParams = { ...filterParams };
@@ -298,13 +274,14 @@ export class OrdersComponent implements OnInit  {
         ? Number(this.route.snapshot.queryParams['page'])
         : 1;
 
+
       const queryParams: any = {
-        page: this.currentPage,
+        page:  this.currentPage ,
         sortColumn: this.sortColumn,
         sortDirection: this.sortDirection,
         ...filterParams,
-
       };
+
 
       for (const key in filterParams) {
         if (filterParams.hasOwnProperty(key)) {
@@ -336,7 +313,6 @@ export class OrdersComponent implements OnInit  {
     }, 400);
   }
 
-
   sortData(column: string): void {
     let sortColumn = column;
     let sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -354,18 +330,25 @@ export class OrdersComponent implements OnInit  {
     this.sortColumn = sortColumn;
     this.sortDirection = sortDirection;
 
-    this.applySortAndFilter()
+    console.log('Sort Column:', sortColumn);
+    console.log('Sort Direction:', sortDirection);
+
+
+    this.applySort()
 
   }
 
-  applySortAndFilter() {
+  applySort() {
     const queryParams: any = {
       ...this.queryParams,
       page: this.currentPage,
-      sortColumn: this.sortColumn,
-      sortDirection: this.sortDirection,
-      ...this.filterParams
+      ...this.filterParams,
     };
+
+    if (this.sortColumn && this.sortDirection) {
+      queryParams['sortColumn'] = this.sortColumn;
+      queryParams['sortDirection'] = this.sortDirection;
+    }
 
     this.queryParams = { ...queryParams };
 
@@ -391,6 +374,108 @@ export class OrdersComponent implements OnInit  {
 
     this.getOrders();
   }
+
+
+
+  openAddEditEpmForm(order: IOrder): void {
+    const dialogRef = this.dialog.open(GroupLayoutComponent, {
+      data: { order }
+    });
+
+    dialogRef.afterClosed().subscribe(updatedOrder => {
+      if (updatedOrder) {
+        const index = this.orders.findIndex(o => o.id === updatedOrder.id);
+        if (index !== -1) {
+          this.orders[index] = updatedOrder;
+          this.dataSource.data = this.orders;
+        }
+
+      }
+    });
+  }
+
+
+  getGroups():void{
+    this.groupService.getAllGroup().subscribe(value => this.groups = value)
+  }
+
+
+  loadComments(orderId: number): void {
+    this.commentService.getAllCommentsByOrderId(orderId)
+      .subscribe(comments => {
+        this.comments[orderId] = comments;
+      });
+  }
+
+  setExpandedElement(element: IOrder): void {
+    if (this.expandedElement === element) {
+      this.expandedElement = null;
+    } else {
+      this.expandedElement = element;
+      this.loadComments(element.id);
+    }
+  }
+
+
+  addComment(orderId: number) {
+    const commentControl = this.commentForm.get('comment');
+    if (commentControl) {
+      const comment = commentControl.value;
+      this.commentService.addCommentToOrder(orderId, comment).subscribe(newComment => {
+        if (this.comments[orderId]) {
+          this.comments[orderId].push(newComment);
+        } else {
+          this.comments[orderId] = [newComment];
+        }
+        this.commentForm.reset();
+
+        const order = this.orders.find(order => order.id === orderId);
+        const currentManagerId = order?.managerId;
+
+        this.userService.getByID(newComment.userId.toString()).subscribe(user => {
+
+          if (!currentManagerId || currentManagerId === newComment.userId) {
+
+            if (order) {
+              order.managerId = Number(user.id);
+              order.manager = {
+                type: null,
+                id: Number(user.id),
+                firstName: user.firstName,
+                lastName: user.lastName
+              };
+            }
+          }
+        });
+      });
+    }
+  }
+
+  getUserFullName(userId: string): string {
+    const order = this.orders.find(order => order.managerId === Number(userId));
+    if (order) {
+      return `${order.manager.firstName} ${order.manager.lastName}`;
+    }
+    return 'Unknown';
+  }
+
+  getManagerFullName(manager: any): string {
+    if (manager && manager.firstName && manager.lastName) {
+      return manager.firstName + ' ' + manager.lastName;
+    } else {
+      return 'null';
+    }
+  }
+
+  getGroupNameById(groupId: number): string {
+    const group = this.groups.find(group => group.id === groupId);
+    if (group && group.name){
+      return group.name;
+    }else {
+      return 'null'
+    }
+  }
+
 
   getColumnLabel(column: string): string {
     switch (column) {
@@ -418,7 +503,7 @@ export class OrdersComponent implements OnInit  {
         return 'AlreadyPaid';
       case 'group':
         return 'Group';
-      case 'created_at':
+      case 'created_at ':
         return 'Created_at';
       case 'manager':
         return 'Manager';
@@ -428,7 +513,6 @@ export class OrdersComponent implements OnInit  {
         return column;
     }
   }
-
 
 }
 

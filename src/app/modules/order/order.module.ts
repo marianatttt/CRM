@@ -15,18 +15,19 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatSelectModule} from "@angular/material/select";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 import { OrderRoutingModule } from './order-routing.module';
 import { OrderPageComponent } from './pages/order-page/order-page.component';
 import { OrdersComponent } from './components/orders/orders.component';
-import {MatCheckboxModule} from "@angular/material/checkbox";
 
 
 
 @NgModule({
   declarations: [
     OrderPageComponent,
-    OrdersComponent
+    OrdersComponent,
+
   ],
   imports: [
     CommonModule,
@@ -47,8 +48,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    ReactiveFormsModule,
     MatCheckboxModule,
+
 
   ]
 })

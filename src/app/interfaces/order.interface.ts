@@ -7,7 +7,7 @@ export interface IOrder {
   surname: string;
   email: string;
   phone: string;
-  age: number;
+  age: number | null ;
   course: {
     type:string;
     enum: ECourse
@@ -27,28 +27,22 @@ export interface IOrder {
   }
   sum: number | null;
   alreadyPaid: number | null;
-  groupId: number | null;
+  groupId:  number | null;
 
-  group: {
-    type: string | null;
-    id:string;
-    name:string;
-
-  }
-
-  created_at: string;
+  created_at: Date;
 
   manager: {
    type: string | null
     id:number,
     firstName:string,
-    lastName:string
+    lastName:string,
   };
   utm: string;
   msg: string;
   userId: number | null;
   comments: IComment[];
   ownerId: number;
+  managerId: number
 }
 
 
@@ -83,3 +77,4 @@ export enum EStatus {
   DISAGREE = 'Disagree',
   DUBBING = 'Dubbing',
 }
+

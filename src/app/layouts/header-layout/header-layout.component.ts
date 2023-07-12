@@ -2,7 +2,7 @@ import { Router} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 
 import {IAuth} from "../../interfaces";
-import {AuthService} from "../../services";
+import {AuthService, PageResetService} from "../../services";
 
 
 
@@ -20,8 +20,8 @@ export class HeaderLayoutComponent implements OnInit{
 
   constructor(
     private authService: AuthService,
-
     private router: Router,
+    private pageResetService: PageResetService
 
   ) {
   }
@@ -42,20 +42,28 @@ export class HeaderLayoutComponent implements OnInit{
   }
 
 
-  navigateToHomePage(): void {
-    this.router.navigateByUrl('/order', { replaceUrl: true }).then(() => {
-      window.location.reload();
-    });
-  }
-
-
 
 
   deleteToken(): void {
     this.authService.deleteTokens();
     this.router.navigateByUrl('/auth/login');
   }
+
+  resetPage() {
+    const currentUrl = this.router.url;
+
+    if (currentUrl.includes('/user')) {
+
+      this.router.navigateByUrl('/order');
+    } else if (currentUrl.includes('/order')) {
+
+      this.pageResetService.resetPage();
+    }
+  }
 }
+
+
+
 
 
 

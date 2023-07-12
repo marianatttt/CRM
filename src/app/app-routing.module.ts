@@ -7,7 +7,7 @@ import {MainLayoutComponent} from "./layouts/main-layout/main-layout.component";
 import {AuthGuard} from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'order', pathMatch: 'full' }, // Перенаправлення з кореневого шляху на сторінку ордерів
+  { path: '', redirectTo: 'order', pathMatch: 'full' },
   {
     path: 'auth',
     component: AuthLayoutComponent,

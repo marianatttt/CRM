@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {IAuth, IGroup} from "../interfaces";
+import { IGroup} from "../interfaces";
 import {urls} from "../contants";
 
 @Injectable({
