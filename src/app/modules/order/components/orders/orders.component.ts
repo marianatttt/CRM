@@ -193,23 +193,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleShowMyOrdersOnly(): void {
-    this.showMyOrdersOnly = !this.showMyOrdersOnly;
-
-    this.getOrders();
-  }
-
-
-  isMyOrder(order: any): boolean {
-    if (!this.currentUser) {
-      return false;
-    }
-    if (order.userId === this.currentUser.userId || order.managerId === this.currentUser.userId || order.managerId === null) {
-      return true;
-    }
-    return false;
-  }
-
 
   onFilterChange() {
     clearTimeout(this.filterTimeout);
@@ -375,6 +358,26 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.getOrders();
   }
 
+  downloadExcel(): void {
+    this.orderService.orderExcel(
+      this.currentPage,
+      this.itemsPerPage,
+      this.sortColumn,
+      this.sortDirection,
+      this.filterParams,
+      this.filterForm.value.startDate,
+      this.filterForm.value.endDate
+    ).subscribe(
+      (excelFile: Blob) => {
+        const url = window.URL.createObjectURL(excelFile);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'orders.xlsx';
+        link.click();
+      },
+    );
+  }
+
 
 
   openAddEditEpmForm(order: IOrder): void {
@@ -513,7 +516,22 @@ export class OrdersComponent implements OnInit, OnDestroy {
         return column;
     }
   }
+  toggleShowMyOrdersOnly(): void {
+    this.showMyOrdersOnly = !this.showMyOrdersOnly;
 
+    this.getOrders();
+  }
+
+
+  isMyOrder(order: any): boolean {
+    if (!this.currentUser) {
+      return false;
+    }
+    if (order.userId === this.currentUser.userId || order.managerId === this.currentUser.userId || order.managerId === null) {
+      return true;
+    }
+    return false;
+  }
 }
 
 

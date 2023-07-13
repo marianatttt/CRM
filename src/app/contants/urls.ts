@@ -18,7 +18,8 @@ const urls = {
   order: {
     order:order,
     orderById: (id:number): string=>`${order}/${id}`,
-    orderUserById: (userId:number):string => `${order}/user/${userId}`
+    orderUserById: (userId:number):string => `${order}/user/${userId}`,
+    orderExcel:`${order}/excel`
   },
   users: {
     users,

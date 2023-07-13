@@ -60,6 +60,48 @@ import {urls} from "../contants";
       return this.httpClient.get<{ data: IOrder[]; total: number }>(url);
     }
 
+    orderExcel(
+      page: number,
+      limit: number,
+      sortColumn: string,
+      sortDirection: string,
+      filterParams: any,
+      startDate: string,
+      endDate: string
+    ): Observable<Blob> {
+
+      let queryString = '';
+
+      if (page !== undefined && limit !== undefined) {
+        queryString = `page=${page}&limit=${limit}`;
+      }
+
+
+      if (sortColumn && sortDirection) {
+        const sortParams = `${sortColumn}:${sortDirection}`;
+        queryString += `&sort=${encodeURIComponent(sortParams)}`;
+      }
+
+      if (Object.keys(filterParams).length > 0) {
+        const filters = Object.entries(filterParams)
+          .map(([key, value]) => `${key}:${value}`)
+          .join(',');
+        queryString += `&filter=${encodeURIComponent(filters)}`;
+      }
+
+      if (startDate) {
+        queryString += `&startDate=${encodeURIComponent(startDate)}`;
+      }
+
+      if (endDate) {
+        queryString += `&endDate=${encodeURIComponent(endDate)}`;
+      }
+
+      const url = `${urls.order.orderExcel}?${queryString}`;
+      return this.httpClient.get(url, { responseType: 'blob' });
+    }
+
+
 
     updateOrder(id: number, order: IOrder): Observable<IOrder> {
       return this.httpClient.patch<IOrder>(urls.order.orderById(id), order);
