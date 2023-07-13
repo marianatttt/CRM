@@ -1,0 +1,195 @@
+<form [formGroup]="editForm">
+    <div mat-dialog-content class="content">
+<div class="row">
+
+
+
+  <div>
+
+    <div class="group">
+
+      <ng-container *ngIf="!isAddingGroup; else groupSelect">
+        <mat-form-field appearance="outline">
+          <mat-label>Group</mat-label>
+          <mat-select formControlName="groupId">
+            <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+
+
+            <mat-option value="">All Groups</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+
+      <ng-template #groupSelect>
+        <form [formGroup]="form">
+        <mat-form-field appearance="outline">
+          <mat-label>Group</mat-label>
+          <input type="text " matInput formControlName="name" placeholder="Enter group name">
+        </mat-form-field>
+
+          <ng-container *ngIf="isAddingGroup">
+            <div class="button-group">
+              <button mat-raised-button (click)="toggleAddingGroup()">Cancel</button>
+              <button mat-raised-button color="primary" (click)="saveGroup()">Save</button>
+            </div>
+          </ng-container>
+
+        </form>
+      </ng-template>
+
+
+    </div>
+
+    <ng-container *ngIf="!isAddingGroup">
+      <div class="add-group-button">
+        <button mat-raised-button color="primary" (click)="toggleAddingGroup()">Add Group</button>
+      </div>
+    </ng-container>
+
+  </div>
+
+
+
+
+  <div>
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label >
+    <mat-select  formControlName="status">
+      <mat-option value="In work">In work</mat-option>
+      <mat-option value="New">New</mat-option>
+      <mat-option value="Agree">Agree</mat-option>
+      <mat-option value="Disagree">Disagree</mat-option>
+      <mat-option value="Dubbing">Dubbing</mat-option>
+      <mat-option value="">All statuses</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+</div>
+
+  <div class="row">
+
+  <div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput type="text"  formControlName="name">
+    </mat-form-field>
+  </div>
+
+    <div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Sum</mat-label>
+        <input matInput type="number"  formControlName="sum">
+      </mat-form-field>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+   <div>
+
+     <mat-form-field appearance="outline">
+       <mat-label>Surname</mat-label>
+       <input matInput type="text"  formControlName="surname">
+     </mat-form-field>
+   </div>
+
+   <div>
+
+     <mat-form-field appearance="outline">
+       <mat-label>Already paid</mat-label>
+       <input matInput type="number" formControlName="alreadyPaid">
+     </mat-form-field>
+   </div>
+
+  </div>
+
+  <div class="row">
+
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email">
+  </mat-form-field>
+  </div>
+
+   <div>
+     <mat-form-field appearance="outline">
+       <mat-label>Course</mat-label>
+       <mat-select  formControlName="course">
+         <mat-option value="FS">FS</mat-option>
+         <mat-option value="QACX">QACX</mat-option>
+         <mat-option value="JCX">JCX</mat-option>
+         <mat-option value="JSCX">JSCX</mat-option>
+         <mat-option value="FE">FE</mat-option>
+         <mat-option value="PCX">PCX</mat-option>
+         <mat-option value="">All courses</mat-option>
+       </mat-select>
+     </mat-form-field>
+   </div>
+
+  </div>
+
+  <div class="row">
+
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput type="text" formControlName="phone">
+      </mat-form-field>
+    </div>
+
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Course format</mat-label>
+      <mat-select formControlName="course_format">
+        <mat-option value="static">static</mat-option>
+        <mat-option value="online">online</mat-option>
+        <mat-option value="">All formats</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  </div>
+
+  <div class="row">
+
+   <div>
+     <mat-form-field appearance="outline">
+       <mat-label>Age</mat-label>
+       <input matInput type="number"  formControlName="age">
+     </mat-form-field>
+   </div>
+
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Course type</mat-label>
+        <mat-select  formControlName="course_type">
+          <mat-option value="pro">pro</mat-option>
+          <mat-option value="minimal">minimal</mat-option>
+          <mat-option value="premium">premium</mat-option>
+          <mat-option value="incubator">incubator</mat-option>
+          <mat-option value="vip">vip</mat-option>
+          <mat-option value="">All types</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+  </div>
+
+    </div>
+
+
+</form>
+
+
+  <div mat-dialog-actions class="action">
+
+      <button mat-raised-button [mat-dialog-close]="false">Cancel</button>
+      <button mat-raised-button color="primary" (click)="save()">Save</button>
+
+  </div>
